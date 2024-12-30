@@ -20,11 +20,13 @@ for iface in /sys/class/net/*; do
 done
 
 # 网络设置
-if [ "$count" -eq 1 ]; then
-  uci set network.lan.proto='dhcp'
-elif [ "$count" -gt 1 ]; then
-  uci set network.lan.ipaddr='192.168.2.22'
-fi
+# 无论多少个网络接口，都将 eth0 设为 LAN 口，并设置静态 IP
+uci set network.lan.device='eth0'  # 确保 eth0 被用作 LAN 接口
+uci set network.lan.proto='static'
+uci set network.lan.ipaddr='192.168.2.22'
+uci set network.lan.netmask='255.255.255.0'
+uci set network.lan.gateway='192.168.2.1'  # 设置默认网关
+uci set network.lan.dns='223.5.5.5 119.29.29.29'  # 设置 DNS 服务器
 
 # 设置所有网口可访问网页终端
 uci delete ttyd.@ttyd[0].interface
